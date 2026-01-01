@@ -1,0 +1,113 @@
+@import "tailwindcss";
+
+:root {
+    --default-text-color: var(--black-colors-0);
+    --primary-color: var(--primary-colors-6);
+    --secondary-color: var(--secondary-colors-6);
+
+    --primary-colors-0: #fff5f5;
+    --primary-colors-1: #ffe3e3;
+    --primary-colors-2: #ffc9c9;
+    --primary-colors-3: #ffa8a8;
+    --primary-colors-4: #ff8787;
+    --primary-colors-5: #e03131;
+    --primary-colors-6: #b61d17; /* PRIMARY */
+    --primary-colors-7: #8f1612;
+    --primary-colors-8: #6a100d;
+    --primary-colors-9: #400907;
+
+    --secondary-colors-0: #fff8eb;
+    --secondary-colors-1: #fef3c7;
+    --secondary-colors-2: #fde68a;
+    --secondary-colors-3: #fcd34d;
+    --secondary-colors-4: #fbbf24;
+    --secondary-colors-5: #f8b018;
+    --secondary-colors-6: #f59e0b; /* SECONDARY (대표 컬러) */
+    --secondary-colors-7: #d97706;
+    --secondary-colors-8: #b45309;
+    --secondary-colors-9: #78350f;
+
+    /*--secondary-colors-0: #e0f2f1;*/
+    /*--secondary-colors-1: #b2dfdb;*/
+    /*--secondary-colors-2: #80cbc4;*/
+    /*--secondary-colors-3: #4db6ac;*/
+    /*--secondary-colors-4: #26a69a;*/
+    /*--secondary-colors-5: #009688;*/
+    /*--secondary-colors-6: #00897b;*/
+    /*--secondary-colors-7: #00796b;*/
+    /*--secondary-colors-8: #00695c;*/
+    /*--secondary-colors-9: #004d40;*/
+
+    --black-colors-0: #f7f7f7;
+    --black-colors-1: #e1e1e1;
+    --black-colors-2: #cfcfcf;
+    --black-colors-3: #b1b1b1;
+    --black-colors-4: #8e8e8e;
+    --black-colors-5: #6b6b6b;
+    --black-colors-6: #3f3f3f;
+    --black-colors-7: #2a2a2a;
+    --black-colors-8: #181818;
+    --black-colors-9: #0f0f0f; /* base dark background */
+}
+
+/* Tailwind v4 theme 토큰 매핑 */
+/*@theme {*/
+/*    --color-default-text: var(--default-text-color);*/
+/*    --color-primary: var(--primary-color);*/
+/*    --color-secondary: var(--secondary-color);*/
+
+/*    !* Primary 팔레트 *!*/
+/*    --color-primary-50: var(--primary-colors-0);*/
+/*    --color-primary-100: var(--primary-colors-1);*/
+/*    --color-primary-200: var(--primary-colors-2);*/
+/*    --color-primary-300: var(--primary-colors-3);*/
+/*    --color-primary-400: var(--primary-colors-4);*/
+/*    --color-primary-500: var(--primary-colors-5);*/
+/*    --color-primary-600: var(--primary-colors-6);*/
+/*    --color-primary-700: var(--primary-colors-7);*/
+/*    --color-primary-800: var(--primary-colors-8);*/
+/*    --color-primary-900: var(--primary-colors-9);*/
+
+/*    !* Secondary 팔레트 *!*/
+/*    --color-secondary-50: var(--secondary-colors-0);*/
+/*    --color-secondary-100: var(--secondary-colors-1);*/
+/*    --color-secondary-200: var(--secondary-colors-2);*/
+/*    --color-secondary-300: var(--secondary-colors-3);*/
+/*    --color-secondary-400: var(--secondary-colors-4);*/
+/*    --color-secondary-500: var(--secondary-colors-5);*/
+/*    --color-secondary-600: var(--secondary-colors-6);*/
+/*    --color-secondary-700: var(--secondary-colors-7);*/
+/*    --color-secondary-800: var(--secondary-colors-8);*/
+/*    --color-secondary-900: var(--secondary-colors-9);*/
+/*}*/
+
+/*@media (prefers-color-scheme: dark) {*/
+/*    :root {*/
+/*        --primary-colors-0: #3c3c3c;*/
+/*        --primary-colors-1: #606060;*/
+/*        --primary-colors-2: #818181;*/
+/*        --primary-colors-3: #979797;*/
+/*        --primary-colors-4: #c2c2c2;*/
+/*        --primary-colors-5: #dedede;*/
+/*        --primary-colors-6: #f0f0f0;*/
+/*        --primary-colors-7: #f5f5f5;*/
+/*        --primary-colors-8: #fafafa;*/
+/*        --primary-colors-9: #ffffff;*/
+
+/*        --secondary-colors-0: #004d40;*/
+/*        --secondary-colors-1: #00695c;*/
+/*        --secondary-colors-2: #00796b;*/
+/*        --secondary-colors-3: #00897b;*/
+/*        --secondary-colors-4: #009688;*/
+/*        --secondary-colors-5: #26a69a;*/
+/*        --secondary-colors-6: #4db6ac;*/
+/*        --secondary-colors-7: #80cbc4;*/
+/*        --secondary-colors-8: #b2dfdb;*/
+/*        --secondary-colors-9: #e0f2f1;*/
+/*    }*/
+/*}*/
+
+body {
+    color: var(--default-text-color);
+    /*background: var(--background);*/
+}
