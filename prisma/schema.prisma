@@ -1,0 +1,33 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum TodoState {
+  PENDING
+  IN_PROGRESS
+  ON_HOLD
+  DONE
+}
+
+model Todo {
+  id        String    @id @default(uuid()) @db.Uuid
+  parentId  String?   @db.Uuid
+
+  title     String    @db.VarChar(255)
+  contents  String?   @db.Text
+  state     TodoState @default(PENDING)
+
+  date      DateTime  @default(now()) @db.Timestamp(6)
+  deadline  DateTime? @db.Timestamp(6)
+
+  parent    Todo?     @relation("TodoToChildren", fields: [parentId], references: [id], onDelete: SetNull)
+  children  Todo[]    @relation("TodoToChildren")
+
+  @@index([parentId])
+  @@index([state])
+  @@map("todos")
+}
