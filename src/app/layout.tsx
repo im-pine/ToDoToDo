@@ -1,9 +1,14 @@
-import type { Metadata } from 'next'
-import '../styles/globals.css'
-import '@mantine/core/styles.css'
+import { config } from '@fortawesome/fontawesome-svg-core'
 import { MantineProvider } from '@mantine/core'
+import type { Metadata } from 'next'
 import theme from '@/styles/mantine'
 import { ReactNode } from 'react'
+
+import '@fortawesome/fontawesome-svg-core/styles.css'
+import '@mantine/core/styles.css'
+import '../styles/globals.css'
+
+config.autoAddCss = false
 
 const TITLE = 'ToDoToDo'
 export const metadata: Metadata = {

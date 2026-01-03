@@ -14,8 +14,8 @@ enum TodoState {
 }
 
 model Todo {
-  id        String    @id @default(uuid()) @db.Uuid
-  parentId  String?   @db.Uuid
+  id        Int      @id @default(autoincrement())
+  parentId  Int?
 
   title     String    @db.VarChar(255)
   contents  String?   @db.Text
@@ -24,7 +24,7 @@ model Todo {
   date      DateTime  @default(now()) @db.Timestamp(6)
   deadline  DateTime? @db.Timestamp(6)
 
-  parent    Todo?     @relation("TodoToChildren", fields: [parentId], references: [id], onDelete: SetNull)
+  parent    Todo?     @relation("TodoToChildren", fields: [parentId], references: [id], onDelete: Cascade)
   children  Todo[]    @relation("TodoToChildren")
 
   @@index([parentId])
