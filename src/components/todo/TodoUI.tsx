@@ -1,16 +1,11 @@
-import { Flex, Text } from '@mantine/core'
-import { Todo, TodoState } from '@prisma/client'
-import { faCircle, faCircleCheck, IconDefinition } from '@fortawesome/free-regular-svg-icons'
 import { faSquare, faCircle as faSolidCircle } from '@fortawesome/free-solid-svg-icons'
+import { faCircle, faCircleCheck } from '@fortawesome/free-regular-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { StatusConfig } from '@/components/todo/_core'
+import { Todo, TodoState } from '@prisma/client'
+import { Flex, Text } from '@mantine/core'
 
-type StatusMeta = {
-  icon: IconDefinition
-  color: string
-  label: string
-}
-
-const StatusConfig: Record<TodoState, StatusMeta> = {
+const config: StatusConfig = {
   [TodoState.PENDING]: {
     icon: faCircle,
     color: 'black.4',
@@ -34,9 +29,9 @@ const StatusConfig: Record<TodoState, StatusMeta> = {
 }
 
 export default function TodoUI({ todo }: { todo: Todo }) {
-  const icon = StatusConfig[todo.state].icon
+  const icon = config[todo.state].icon
   const cancelLine = todo.state === TodoState.DONE ? 'line-through' : ''
-  const color = StatusConfig[todo.state].color
+  const color = config[todo.state].color
 
   return (
     <Flex align={'center'} gap={8} c={color}>

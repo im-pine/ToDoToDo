@@ -2,19 +2,20 @@
 
 import { useDisclosure } from '@mantine/hooks'
 import { AppShell, Box, Burger, Container, Divider, Input, TextInput, Title } from '@mantine/core'
-import Logo from '@/base/Logo'
-import SideBar from '@/base/SideBar'
+import Logo from '@/layout/Logo'
+import SideBar from '@/layout/SideBar'
 import TodoUI from '@/components/todo/TodoUI'
 import dummyTodo from '../../public/dummyTodo'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faPaperPlane } from '@fortawesome/free-solid-svg-icons'
+import TodoSend from '@/components/input/TodoSend'
 
 export default function Home() {
   const [opened, { toggle }] = useDisclosure()
 
   return (
     <AppShell
-      padding="md"
+      padding={'md'}
       // header={{ height: 60 }}
       navbar={{
         width: 256,
@@ -45,17 +46,7 @@ export default function Home() {
           <TodoUI todo={dummyTodo[3]} />
           <TodoUI todo={dummyTodo[5]} />
           <Divider color={'black.6'} />
-          <TextInput
-            size="md"
-            radius="xl"
-            placeholder="할일을 입력해 주세요."
-            classNames={{ input: '!bg-black border !border-primary-600' }}
-            rightSection={
-              <Box c={'primary.6'}>
-                <FontAwesomeIcon icon={faPaperPlane} />
-              </Box>
-            }
-          />
+          <TodoSend />
         </Container>
       </AppShell.Main>
     </AppShell>

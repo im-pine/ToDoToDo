@@ -4,6 +4,7 @@ generator client {
 
 datasource db {
   provider = "postgresql"
+  url      = env("DATABASE_URL")
 }
 
 enum TodoState {
@@ -14,18 +15,18 @@ enum TodoState {
 }
 
 model Todo {
-  id        Int      @id @default(autoincrement())
-  parentId  Int?
+  id       Int  @id @default(autoincrement())
+  parentId Int?
 
-  title     String    @db.VarChar(255)
-  contents  String?   @db.Text
-  state     TodoState @default(PENDING)
+  title    String    @db.VarChar(255)
+  contents String    @default("") @db.Text
+  state    TodoState @default(PENDING)
 
-  date      DateTime  @default(now()) @db.Timestamp(6)
-  deadline  DateTime? @db.Timestamp(6)
+  date     DateTime  @default(now()) @db.Timestamp(6)
+  deadline DateTime? @db.Timestamp(6)
 
-  parent    Todo?     @relation("TodoToChildren", fields: [parentId], references: [id], onDelete: Cascade)
-  children  Todo[]    @relation("TodoToChildren")
+  parent   Todo?  @relation("TodoToChildren", fields: [parentId], references: [id], onDelete: Cascade)
+  children Todo[] @relation("TodoToChildren")
 
   @@index([parentId])
   @@index([state])

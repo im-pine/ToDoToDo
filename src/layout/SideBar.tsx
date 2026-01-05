@@ -1,5 +1,5 @@
 import { AppShell, Divider } from '@mantine/core'
-import Logo from '@/base/Logo'
+import Logo from '@/layout/Logo'
 import TodoUI from '@/components/todo/TodoUI'
 import dummyTodo from '../../public/dummyTodo'
 

@@ -24,7 +24,7 @@ export default function RootLayout({
   // 서버에서 초기 컬러 스킴을 결정(쿠키 등). 없으면 light.
   // const initial = (cookies()?.get('theme')?.value as 'light' | 'dark') ?? 'light'
   return (
-    <html lang="en">
+    <html lang={'en'}>
       {/*<body suppressHydrationWarning>*/}
       <body>
         <MantineProvider theme={theme}>{children}</MantineProvider>
