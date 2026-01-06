@@ -1,7 +1,9 @@
 @import "tailwindcss";
 
+@config "../../tailwind.config.ts";
+
 :root {
-    --default-text-color: var(--black-colors-0);
+    --default-text-color: var(--black-colors-1);
     --primary-color: var(--primary-colors-6);
     --secondary-color: var(--secondary-colors-6);
 
@@ -106,8 +108,7 @@
 /*        --secondary-colors-9: #e0f2f1;*/
 /*    }*/
 /*}*/
-
 body {
     color: var(--default-text-color);
-    /*background: var(--background);*/
+    background-color: var(--black-colors-7);
 }
