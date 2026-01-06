@@ -58,8 +58,7 @@
     - 데이터 구조 설계 및 테이블 제작
     - 컴포넌트 구조 설계
 - 2025.01.04(일): Figma 작업 및 UI 개발 1차 완료
-  -
-  Figma: [ToDoToDo Figma 링크](https://www.figma.com/design/WqAzHZ89oEReYfgQatwY1U/TODOTODO?node-id=1-2&t=FFOTjBqxK76MHKzh-1)
+  - Figma: [ToDoToDo Figma 링크](https://www.figma.com/design/WqAzHZ89oEReYfgQatwY1U/TODOTODO?node-id=1-2&t=FFOTjBqxK76MHKzh-1)
 - 2025.01.10(토): TODO 기능 개발 및 적용
     - ToDo 코어 개발
     - ToDo 모달 개발
