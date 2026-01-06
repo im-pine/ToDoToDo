@@ -39,7 +39,7 @@ export default class ToDo {
   public deadline: Date | null
   public children: ChildrenSummary[]
 
-  constructor(arg?: string | Todo) {
+  constructor(arg?: string | Todo | TodoSummary) {
     this.id = null
     this.parentId = null
     this.title = null
@@ -63,8 +63,21 @@ export default class ToDo {
     this.contents = todo?.contents || null
     this.state = todo?.state || null
     this.date = todo?.date || null
-    this.deadline = todo?.deadline || null
+    this.deadline = todo?.deadline ? new Date(todo?.deadline) : null
     this.children = []
+  }
+
+  public get() {
+    return {
+      id: this.id,
+      parentId: this.parentId,
+      title: this.title,
+      contents: this.contents,
+      state: this.state,
+      date: this.date,
+      deadline: this.deadline,
+      children: this.children,
+    }
   }
 
   public async read(): Promise<TodoSummary> {

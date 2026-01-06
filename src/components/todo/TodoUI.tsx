@@ -1,9 +1,13 @@
 import { faSquare, faCircle as faSolidCircle } from '@fortawesome/free-solid-svg-icons'
 import { faCircle, faCircleCheck } from '@fortawesome/free-regular-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { StatusConfig } from '@/components/todo/_core'
+import { StatusConfig, TodoSummary } from '@/components/todo/_core'
 import { Todo, TodoState } from '@prisma/client'
-import { Flex, Text } from '@mantine/core'
+import { Flex, Modal, Text } from '@mantine/core'
+import { useDisclosure } from '@mantine/hooks'
+import TodoModal from '@/components/todoModal/TodoModal'
+import ToDo from '@/components/todo/index'
+import { useState } from 'react'
 
 const config: StatusConfig = {
   [TodoState.PENDING]: {
@@ -28,15 +32,30 @@ const config: StatusConfig = {
   },
 }
 
-export default function TodoUI({ todo }: { todo: Todo }) {
+export default function TodoUI({ todo }: { todo: Todo | TodoSummary }) {
+  const [modalData, setModalData] = useState<null | ToDo>(null)
+  const [opened, { open, close }] = useDisclosure(false)
   const icon = config[todo.state].icon
   const cancelLine = todo.state === TodoState.DONE ? 'line-through' : ''
   const color = config[todo.state].color
 
+  const openModal = async () => {
+    const todoClass = new ToDo(todo)
+    const todoDetail = await todoClass.detailsRead()
+    const modal = new ToDo(todoDetail)
+    setModalData(modal)
+    console.log('todoDetail::', todoDetail)
+    open()
+  }
   return (
-    <Flex align={'center'} gap={8} c={color}>
-      <FontAwesomeIcon icon={icon} />
-      <Text td={cancelLine}>{todo.title}</Text>
-    </Flex>
+    <>
+      <TodoModal opened={opened} onClose={close} title={'Authentication'} todo={modalData}>
+        {/* Modal content */}
+      </TodoModal>
+      <Flex className={'cursor-pointer'} align={'center'} gap={8} c={color} onClick={openModal}>
+        <FontAwesomeIcon icon={icon} />
+        <Text td={cancelLine}>{todo.title}</Text>
+      </Flex>
+    </>
   )
 }

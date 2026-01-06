@@ -18,6 +18,8 @@ export type UpdateTodoPayload = {
   deadline?: Date | null
 }
 
+export type TodoMappingData = Record<string, TodoSummary[]>
+
 export async function readTodo(id: number): Promise<TodoSummary> {
   return queryClient.fetchQuery({
     queryKey: ['todo', id],

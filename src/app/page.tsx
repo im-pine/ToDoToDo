@@ -1,51 +1,43 @@
 'use client'
 
+import { AppShell, Box, Container, Divider, Stack, Title } from '@mantine/core'
 import { useDisclosure } from '@mantine/hooks'
-import { AppShell, Box, Burger, Container, Divider, Input, TextInput, Title } from '@mantine/core'
-import Logo from '@/layout/Logo'
-import SideBar from '@/layout/SideBar'
-import TodoUI from '@/components/todo/TodoUI'
-import dummyTodo from '../../public/dummyTodo'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faPaperPlane } from '@fortawesome/free-solid-svg-icons'
 import TodoSend from '@/components/input/TodoSend'
+import TodoUI from '@/components/todo/TodoUI'
+import SideBar from '@/layout/SideBar'
+import { useQuery } from '@tanstack/react-query'
+import { fetcher } from '@/lib/fetcher'
+import { TodoSummary } from '@/components/todo/_core'
+import formatDateToKr from '@/lib/formatDateToKr'
+
+type TodoMappingData = Record<string, TodoSummary[]>
 
 export default function Home() {
   const [opened, { toggle }] = useDisclosure()
-
+  const { data, isLoading, error } = useQuery<TodoMappingData>({
+    queryKey: ['todo'],
+    queryFn: () => fetcher<TodoMappingData>('/api/todo?mappingType=deadline'),
+  })
+  console.log(data)
+  // if (isLoading) return null
+  // if (error) return null
   return (
-    <AppShell
-      padding={'md'}
-      // header={{ height: 60 }}
-      navbar={{
-        width: 256,
-        breakpoint: 'sm',
-        collapsed: { mobile: !opened },
-      }}
-    >
-      {/*<AppShell.Header>*/}
-      {/*  <Burger*/}
-      {/*    opened={opened}*/}
-      {/*    onClick={toggle}*/}
-      {/*    hiddenFrom="sm"*/}
-      {/*    size="sm"*/}
-      {/*  />*/}
-
-      {/*  <div>Logo</div>*/}
-      {/*</AppShell.Header>*/}
+    <AppShell padding={'md'} navbar={{ width: 256, breakpoint: 'sm', collapsed: { mobile: !opened } }}>
       <SideBar />
       <AppShell.Main bg={'black.7'}>
-        <Container size={'768px'} py={'64px'}>
-          <Title order={2}>오늘</Title>
-          <TodoUI todo={dummyTodo[0]} />
-          <TodoUI todo={dummyTodo[1]} />
-          <TodoUI todo={dummyTodo[2]} />
-          <TodoUI todo={dummyTodo[4]} />
-          <Divider color={'black.6'} />
-          <Title order={2}>내일</Title>
-          <TodoUI todo={dummyTodo[3]} />
-          <TodoUI todo={dummyTodo[5]} />
-          <Divider color={'black.6'} />
+        <Container size={'768px'} py={'64px'} h={'94dvh'} className={'relative h-full'}>
+          {data &&
+            Object.entries(data).map(([key, value]) => (
+              <Stack key={key} gap={20}>
+                <Title order={2}>{formatDateToKr(key)}</Title>
+                <Stack gap={4}>
+                  {value.map((todo) => (
+                    <TodoUI key={todo.id} todo={todo} />
+                  ))}
+                </Stack>
+                <Divider color={'black.6'} />
+              </Stack>
+            ))}
           <TodoSend />
         </Container>
       </AppShell.Main>

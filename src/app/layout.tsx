@@ -7,6 +7,7 @@ import { ReactNode } from 'react'
 import '@fortawesome/fontawesome-svg-core/styles.css'
 import '@mantine/core/styles.css'
 import '../styles/globals.css'
+import QueryProvider from '@/app/QueryProvider'
 
 config.autoAddCss = false
 
@@ -27,7 +28,9 @@ export default function RootLayout({
     <html lang={'en'}>
       {/*<body suppressHydrationWarning>*/}
       <body>
-        <MantineProvider theme={theme}>{children}</MantineProvider>
+        <QueryProvider>
+          <MantineProvider theme={theme}>{children}</MantineProvider>
+        </QueryProvider>
       </body>
     </html>
   )

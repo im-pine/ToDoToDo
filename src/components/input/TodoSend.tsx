@@ -3,11 +3,14 @@ import { faPaperPlane } from '@fortawesome/free-solid-svg-icons'
 import { ActionIcon, Box, TextInput } from '@mantine/core'
 import { useDisclosure } from '@mantine/hooks'
 import ToDo from '@/components/todo'
-import { FormEvent } from 'react'
+import { FormEvent, useRef } from 'react'
+import { useQueryClient } from '@tanstack/react-query'
 
 export default function TodoSend() {
   const [loading, { open: loadingOn, close }] = useDisclosure()
   const loadingOff = () => setTimeout(close, 1500)
+  const formRef = useRef<HTMLFormElement>(null)
+  const queryClient = useQueryClient()
 
   const createTodo = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault()
@@ -19,7 +22,9 @@ export default function TodoSend() {
 
       const todo = new ToDo(title)
 
-      await todo.create() // ✅ create가 Promise를 반환해야 함
+      await todo.create()
+      formRef.current?.reset()
+      await queryClient.invalidateQueries({ queryKey: ['todo'] })
     } catch (err) {
       // 여기서 토스트/알림 처리
       console.error(err)
@@ -28,7 +33,7 @@ export default function TodoSend() {
     }
   }
   return (
-    <Box component={'form'} onSubmit={createTodo}>
+    <Box component={'form'} onSubmit={createTodo} className={'absolute right-0 bottom-0 left-0'} ref={formRef}>
       <TextInput
         size={'md'}
         radius={'xl'}
