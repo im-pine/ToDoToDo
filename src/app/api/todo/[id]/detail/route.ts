@@ -1,9 +1,9 @@
 import { NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 
-export async function GET(_req: Request, { params }: { params: { id: string } }) {
+export async function GET(_req: Request, { params }: { params: Promise<{ id: string }> }) {
   try {
-    const id = Number(params.id)
+    const id = Number((await params).id)
     if (!Number.isInteger(id)) {
       return NextResponse.json({ message: 'invalid id' }, { status: 400 })
     }
@@ -19,9 +19,12 @@ export async function GET(_req: Request, { params }: { params: { id: string } })
         date: true,
         deadline: true,
         children: {
+          // id가 있어야 모달에서 하위 투두로 진입할 수 있다
           select: {
+            id: true,
             title: true,
             state: true,
+            deadline: true,
           },
           orderBy: { id: 'asc' },
         },

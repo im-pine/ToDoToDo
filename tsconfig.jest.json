@@ -1,0 +1,8 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    // next.js 는 jsx: "preserve" 로 두고 자체 변환하지만,
+    // jest 는 변환된 결과를 바로 실행해야 하므로 여기서만 덮어쓴다
+    "jsx": "react-jsx"
+  }
+}

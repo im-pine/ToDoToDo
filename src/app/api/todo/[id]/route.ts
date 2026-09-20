@@ -24,9 +24,9 @@ async function getChildrenIds(rootId: number): Promise<number[]> {
   return descendants
 }
 
-export async function GET(_req: Request, { params }: { params: { id: string } }) {
+export async function GET(_req: Request, { params }: { params: Promise<{ id: string }> }) {
   try {
-    const id = Number(params.id)
+    const id = Number((await params).id)
     if (!Number.isInteger(id)) {
       return NextResponse.json({ message: 'invalid id' }, { status: 400 })
     }
@@ -51,9 +51,9 @@ export async function GET(_req: Request, { params }: { params: { id: string } })
   }
 }
 
-export async function PATCH(req: Request, { params }: { params: { id: string } }) {
+export async function PATCH(req: Request, { params }: { params: Promise<{ id: string }> }) {
   try {
-    const id = Number(params.id)
+    const id = Number((await params).id)
     if (!Number.isInteger(id)) {
       return NextResponse.json({ message: 'invalid id' }, { status: 400 })
     }
@@ -78,6 +78,12 @@ export async function PATCH(req: Request, { params }: { params: { id: string } }
       data.state = body.state
     }
 
+    if (body.date !== undefined) {
+      const date = new Date(body.date)
+      if (Number.isNaN(date.getTime())) return NextResponse.json({ message: 'date is invalid' }, { status: 400 })
+      data.date = date
+    }
+
     if (body.deadline !== undefined) {
       data.deadline = body.deadline ? new Date(body.deadline) : null
     }
@@ -95,9 +101,9 @@ export async function PATCH(req: Request, { params }: { params: { id: string } }
   }
 }
 
-export async function DELETE(_req: Request, { params }: { params: { id: string } }) {
+export async function DELETE(_req: Request, { params }: { params: Promise<{ id: string }> }) {
   try {
-    const id = Number(params.id)
+    const id = Number((await params).id)
     if (!Number.isInteger(id)) {
       return NextResponse.json({ message: 'invalid id' }, { status: 400 })
     }

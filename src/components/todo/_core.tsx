@@ -1,5 +1,5 @@
-import { createTodo, deleteTodo, detailsReadTodo, readTodo, updateTodo } from '@/lib/api/todo'
-import { IconDefinition } from '@fortawesome/free-regular-svg-icons'
+import { createTodo, deleteTodo, detailsReadTodo, readTodo, updateTodo, UpdateTodoPayload } from '@/lib/api/todo'
+import type { IconDefinition } from '@fortawesome/free-regular-svg-icons'
 import { Todo, TodoState } from '@prisma/client'
 
 type StatusMeta = {
@@ -7,10 +7,14 @@ type StatusMeta = {
   color: string
   label: string
 }
-type ChildrenSummary = {
+
+export type ChildSummary = {
+  id: number
   title: string
   state: TodoState
+  deadline: string | null
 }
+
 export type TodoSummary = {
   id: number
   title: string
@@ -26,7 +30,14 @@ export type TodoDetails = {
   state: TodoState
   date: string
   deadline: string | null
-  children: Array<ChildrenSummary>
+  children: Array<ChildSummary>
+}
+
+type TodoSource = Todo | TodoSummary | TodoDetails
+
+const toDate = (value: Date | string | null | undefined): Date | null => {
+  if (!value) return null
+  return value instanceof Date ? value : new Date(value)
 }
 
 export default class ToDo {
@@ -37,9 +48,9 @@ export default class ToDo {
   public state: TodoState | null
   public date: Date | null
   public deadline: Date | null
-  public children: ChildrenSummary[]
+  public children: ChildSummary[]
 
-  constructor(arg?: string | Todo | TodoSummary) {
+  constructor(arg?: string | TodoSource) {
     this.id = null
     this.parentId = null
     this.title = null
@@ -56,15 +67,18 @@ export default class ToDo {
       return
     }
 
-    const todo = arg
-    this.id = todo?.id || null
-    this.parentId = todo?.parentId || null
-    this.title = todo?.title || null
-    this.contents = todo?.contents || null
-    this.state = todo?.state || null
-    this.date = todo?.date || null
-    this.deadline = todo?.deadline ? new Date(todo?.deadline) : null
-    this.children = []
+    const todo = arg as Partial<Todo & TodoDetails>
+
+    // ?? 를 쓰는 이유: || 는 id 0 이나 빈 문자열 contents 까지 null 로 떨어뜨린다
+    this.id = todo.id ?? null
+    this.parentId = todo.parentId ?? null
+    this.title = todo.title ?? null
+    this.contents = todo.contents ?? null
+    this.state = todo.state ?? null
+    this.date = toDate(todo.date)
+    this.deadline = toDate(todo.deadline)
+    // children 을 가진 소스(TodoDetails)로 생성할 때 하위 목록이 유실되면 안 된다
+    this.children = todo.children ?? []
   }
 
   public get() {
@@ -87,7 +101,7 @@ export default class ToDo {
 
     this.title = summary.title
     this.state = summary.state
-    this.deadline = summary.deadline ? new Date(summary.deadline) : null
+    this.deadline = toDate(summary.deadline)
 
     return summary
   }
@@ -102,11 +116,10 @@ export default class ToDo {
     this.title = details.title
     this.contents = details.contents ?? null
     this.state = details.state
-    this.date = new Date(details.date)
-    this.deadline = details.deadline ? new Date(details.deadline) : null
+    this.date = toDate(details.date)
+    this.deadline = toDate(details.deadline)
     this.children = details.children
 
-    // children은 클래스 필드에 없으니 return으로 제공
     return details
   }
 
@@ -127,22 +140,27 @@ export default class ToDo {
     return created
   }
 
-  public async update(): Promise<Todo> {
+  /**
+   * patch 를 넘기면 그 값이 그대로 전송된다(null 로 비우는 것도 가능).
+   * 넘기지 않으면 인스턴스에서 값이 있는 필드만 모아 부분 업데이트한다.
+   */
+  public async update(patch?: UpdateTodoPayload): Promise<Todo> {
     if (!this.id) throw new Error('id is required')
 
-    // 부분 업데이트 payload: "변경 의도 있는 것만" 넣기
-    const payload: Record<string, unknown> = {}
+    const payload: UpdateTodoPayload = patch ?? {}
 
-    if (this.title !== null) payload.title = this.title
-    if (this.contents !== null) payload.contents = this.contents
-    if (this.state !== null) payload.state = this.state
-    if (this.deadline !== null) payload.deadline = this.deadline
+    if (!patch) {
+      if (this.title !== null) payload.title = this.title
+      if (this.contents !== null) payload.contents = this.contents
+      if (this.state !== null) payload.state = this.state
+      if (this.deadline !== null) payload.deadline = this.deadline
+    }
 
     if (Object.keys(payload).length === 0) {
       throw new Error('nothing to update')
     }
 
-    const updated = await updateTodo(this.id, payload as any)
+    const updated = await updateTodo(this.id, payload)
     this.set(updated)
     return updated
   }
@@ -150,11 +168,36 @@ export default class ToDo {
   public async delete(): Promise<number[]> {
     if (!this.id) throw new Error('id is required')
 
-    const deletedIds = await deleteTodo(this.id)
+    const { deletedId } = await deleteTodo(this.id, this.parentId)
 
     this.reset()
 
-    return deletedIds
+    return [deletedId]
+  }
+
+  // ─────────────────────────────────────────────
+  // Derived Functions — 기본 CRUD 를 조합한 파생 기능
+  // ─────────────────────────────────────────────
+
+  /** 상태만 변경한다. update() 조합. */
+  public async stateUpdate(next: TodoState): Promise<Todo> {
+    return this.update({ state: next })
+  }
+
+  /** 완료 ↔ 대기 토글. stateUpdate() 조합. */
+  public async toggleDone(): Promise<Todo> {
+    const next = this.state === TodoState.DONE ? TodoState.PENDING : TodoState.DONE
+    return this.stateUpdate(next)
+  }
+
+  /** 현재 투두를 부모로 하는 하위 투두를 만든다. create() 조합. */
+  public async addChild(title: string): Promise<Todo> {
+    if (!this.id) throw new Error('id is required')
+
+    const child = new ToDo(title)
+    child.parentId = this.id
+
+    return child.create()
   }
 
   private set(todo: Todo) {
@@ -163,8 +206,8 @@ export default class ToDo {
     this.title = todo.title
     this.contents = todo.contents
     this.state = todo.state
-    this.date = new Date(todo.date)
-    this.deadline = todo.deadline ? new Date(todo.deadline) : null
+    this.date = toDate(todo.date)
+    this.deadline = toDate(todo.deadline)
   }
 
   private reset() {
