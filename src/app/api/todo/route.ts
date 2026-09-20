@@ -19,9 +19,8 @@ export async function GET(req: Request) {
     const mappingType = (searchParams.get('mappingType') ?? undefined) as MappingType
 
     const todos = await prisma.todo.findMany({
-      // 하위 투두는 모달에서만 노출되므로 최상위 목록에서는 제외한다
       where: {
-        parentId: null,
+        state: { in: [TodoState.PENDING, TodoState.IN_PROGRESS, TodoState.DONE] },
       },
       select: {
         id: true,
@@ -61,10 +60,6 @@ export async function POST(req: Request) {
     const title = String(body.title ?? '').trim()
     if (!title) {
       return NextResponse.json({ message: 'title is required' }, { status: 400 })
-    }
-
-    if (body.state !== undefined && body.state !== null && !Object.values(TodoState).includes(body.state)) {
-      return NextResponse.json({ message: 'state is invalid' }, { status: 400 })
     }
 
     const data: Prisma.TodoCreateInput = {
