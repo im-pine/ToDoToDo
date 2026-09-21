@@ -8,7 +8,7 @@ import { useDisclosure } from '@mantine/hooks'
 import { useQuery } from '@tanstack/react-query'
 import SideBar from '@/layout/SideBar'
 import Header from '@/layout/Header'
-import { useMemo, useState } from 'react'
+import { Suspense, useMemo, useState } from 'react'
 
 export default function Home() {
   const [navOpened, { toggle: toggleNav, close: closeNav }] = useDisclosure()
@@ -79,7 +79,9 @@ export default function Home() {
       </AppShell.Main>
 
       <TodoFormModalUI opened={formOpened} onClose={closeForm} />
-      <PostLoginSyncPrompt />
+      <Suspense fallback={null}>
+        <PostLoginSyncPrompt />
+      </Suspense>
     </AppShell>
   )
 }

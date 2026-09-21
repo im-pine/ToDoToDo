@@ -2,7 +2,7 @@
 
 import { Anchor, Button, Center, Checkbox, Stack, Text } from '@mantine/core'
 import { useSearchParams } from 'next/navigation'
-import { useState } from 'react'
+import { Suspense, useState } from 'react'
 import Logo from '@/layout/Logo'
 
 const ERROR_MESSAGES: Record<string, string> = {
@@ -13,9 +13,20 @@ const ERROR_MESSAGES: Record<string, string> = {
   unexpected_error: '알 수 없는 오류가 발생했습니다.',
 }
 
-export default function LoginPage() {
+/** useSearchParams()는 Suspense 경계 안에서만 프리렌더가 허용되어 별도 컴포넌트로 분리했다 */
+function LoginErrorNotice() {
   const searchParams = useSearchParams()
   const errorCode = searchParams.get('error')
+  if (!errorCode) return null
+
+  return (
+    <Text size={'12px'} c={'primary.4'} ta={'center'}>
+      {ERROR_MESSAGES[errorCode] ?? '로그인 중 오류가 발생했습니다.'}
+    </Text>
+  )
+}
+
+export default function LoginPage() {
   const [remember, setRemember] = useState(true)
 
   const loginHref = `/api/auth/kakao/login${remember ? '?remember=1' : ''}`
@@ -34,11 +45,9 @@ export default function LoginPage() {
           </Text>
         </Stack>
 
-        {errorCode && (
-          <Text size={'12px'} c={'primary.4'} ta={'center'}>
-            {ERROR_MESSAGES[errorCode] ?? '로그인 중 오류가 발생했습니다.'}
-          </Text>
-        )}
+        <Suspense fallback={null}>
+          <LoginErrorNotice />
+        </Suspense>
 
         <Stack gap={16} w={'100%'}>
           <Checkbox
