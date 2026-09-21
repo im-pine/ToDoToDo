@@ -24,9 +24,14 @@
 
 프로젝트 관련 상세 문서는 [Wiki](https://github.com/im-pine/ToDoToDo/wiki)를 참조해 주세요.
 
+### 결과물 
+
+➡  [ToDoToDo 사이트](https://todo.im-pine.com/)
+
 ### 주요 기능
 
 - TODO CRUD
+- 카카오 로그인
 
 ## 🛠 Core Stack
 
