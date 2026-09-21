@@ -1,7 +1,7 @@
 import ToDo from '@/components/todo/_core'
-import { createTodo } from '@/lib/api/todo'
+import { createTodo } from '@/lib/api/todoGateway'
 
-jest.mock('@/lib/api/todo', () => ({
+jest.mock('@/lib/api/todoGateway', () => ({
   createTodo: jest.fn(),
 }))
 

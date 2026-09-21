@@ -1,15 +1,20 @@
 import { NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
+import { requireUserId } from '@/lib/auth/session'
 
-export async function GET(_req: Request, { params }: { params: { id: string } }) {
+export async function GET(_req: Request, { params }: { params: Promise<{ id: string }> }) {
   try {
-    const id = Number(params.id)
+    const userId = await requireUserId()
+    if (!userId) return NextResponse.json({ message: 'unauthorized' }, { status: 401 })
+
+    const { id: rawId } = await params
+    const id = Number(rawId)
     if (!Number.isInteger(id)) {
       return NextResponse.json({ message: 'invalid id' }, { status: 400 })
     }
 
-    const todo = await prisma.todo.findUnique({
-      where: { id },
+    const todo = await prisma.todo.findFirst({
+      where: { id, userId },
       select: {
         id: true,
         parentId: true,
@@ -20,6 +25,7 @@ export async function GET(_req: Request, { params }: { params: { id: string } })
         deadline: true,
         children: {
           select: {
+            id: true,
             title: true,
             state: true,
           },

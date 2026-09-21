@@ -1,3 +1,4 @@
+@import url('https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;600;700&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap');
 @import "tailwindcss";
 
 @config "../../tailwind.config.ts";
@@ -6,6 +7,14 @@
     --default-text-color: var(--black-colors-1);
     --primary-color: var(--primary-colors-6);
     --secondary-color: var(--secondary-colors-6);
+
+    --font-display: 'Rajdhani', sans-serif;
+    --font-body: 'Inter', sans-serif;
+    --font-mono: 'JetBrains Mono', monospace;
+
+    /* 상태 전용 강조색 (팔레트 외 보조색) */
+    --state-pending-color: #3b82f6;
+    --state-done-color: #22c55e;
 
     --primary-colors-0: #fff5f5;
     --primary-colors-1: #ffe3e3;
@@ -110,5 +119,289 @@
 /*}*/
 body {
     color: var(--default-text-color);
-    background-color: var(--black-colors-7);
+    background-color: var(--black-colors-9);
+    font-family: var(--font-body);
+}
+
+/* -------------------------------------------------------------------------- */
+/* 스크롤바                                                                    */
+/* -------------------------------------------------------------------------- */
+
+::-webkit-scrollbar {
+    width: 4px;
+    height: 4px;
+}
+
+::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+    background: var(--black-colors-6);
+    border-radius: 2px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: var(--black-colors-5);
+}
+
+/* -------------------------------------------------------------------------- */
+/* 할일 표현 (카드 · 요약 · 한 줄)                                              */
+/* -------------------------------------------------------------------------- */
+
+.todo-card {
+    background: var(--black-colors-8);
+    border: 1px solid var(--black-colors-7);
+    border-left-width: 3px;
+    border-radius: 6px;
+    padding: 14px 16px;
+    cursor: pointer;
+    transition:
+        background-color 0.15s ease,
+        border-color 0.15s ease;
+}
+
+.todo-card:hover {
+    background: var(--black-colors-7);
+    border-color: var(--black-colors-6);
+}
+
+.todo-brief {
+    padding: 8px 10px;
+    border-left: 2px solid transparent;
+    border-radius: 5px;
+    cursor: pointer;
+    transition:
+        background-color 0.15s ease,
+        border-color 0.15s ease;
+}
+
+.todo-brief:hover {
+    background: var(--black-colors-7);
+    border-left-color: var(--primary-colors-6);
+}
+
+.todo-line {
+    padding: 6px 4px;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.15s ease;
+}
+
+.todo-line:hover {
+    background: var(--black-colors-7);
+}
+
+/* 상태 점 · 상태 칩 */
+.todo-dot {
+    display: inline-block;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    flex-shrink: 0;
+}
+
+.todo-chip {
+    display: inline-flex;
+    align-items: center;
+    font-size: 10px;
+    line-height: 1.4;
+    padding: 2px 6px;
+    border-radius: 3px;
+    border: 1px solid transparent;
+    white-space: nowrap;
+}
+
+/* 진행률 바 */
+.todo-progress {
+    width: 100%;
+    background: var(--black-colors-7);
+    border-radius: 2px;
+    overflow: hidden;
+}
+
+.todo-progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--primary-colors-6), var(--secondary-colors-6));
+    border-radius: 2px;
+    transition: width 0.3s ease;
+}
+
+/* -------------------------------------------------------------------------- */
+/* 사이드바 · 헤더                                                              */
+/* -------------------------------------------------------------------------- */
+
+.logo-underline {
+    height: 1px;
+    background: linear-gradient(90deg, var(--primary-colors-6) 0%, transparent 60%);
+}
+
+.sidebar-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    width: 100%;
+    padding: 6px 10px;
+    border-radius: 5px;
+    border-left: 2px solid transparent;
+    cursor: pointer;
+    transition:
+        background-color 0.15s ease,
+        border-color 0.15s ease;
+}
+
+.sidebar-item:hover {
+    background: var(--black-colors-7);
+}
+
+.sidebar-item--active {
+    background: color-mix(in srgb, var(--primary-colors-6) 12%, transparent);
+    border-left-color: var(--primary-colors-6);
+}
+
+.filter-tab {
+    background: var(--black-colors-7);
+    color: var(--black-colors-4);
+    border-radius: 4px;
+    padding: 5px 12px;
+    font-family: var(--font-display);
+    font-size: 12px;
+    font-weight: 600;
+    white-space: nowrap;
+    cursor: pointer;
+    transition:
+        background-color 0.15s ease,
+        color 0.15s ease;
+}
+
+.filter-tab:hover {
+    color: var(--black-colors-2);
+}
+
+.filter-tab--active {
+    background: var(--primary-colors-6);
+    color: #fff;
+}
+
+/* -------------------------------------------------------------------------- */
+/* 모달 · 폼                                                                   */
+/* -------------------------------------------------------------------------- */
+
+.todo-modal {
+    background: var(--black-colors-8);
+    border: 1px solid var(--black-colors-7);
+    border-top: 3px solid var(--primary-colors-6);
+    border-radius: 8px;
+}
+
+.todo-modal--gold {
+    border-top-color: var(--secondary-colors-6);
+}
+
+.todo-input {
+    background: var(--black-colors-9);
+    border: 1px solid var(--black-colors-7);
+    color: var(--black-colors-1);
+}
+
+.todo-input:focus,
+.todo-input:focus-within {
+    border-color: var(--primary-colors-6);
+}
+
+.todo-input::placeholder {
+    color: var(--black-colors-6);
+}
+
+.todo-dropdown {
+    background: var(--black-colors-8);
+    border-color: var(--black-colors-7);
+}
+
+.todo-state-option {
+    padding: 6px 12px;
+    border-radius: 5px;
+    border: 1px solid var(--black-colors-7);
+    background: var(--black-colors-9);
+    color: var(--black-colors-4);
+    font-size: 12px;
+    cursor: pointer;
+    transition:
+        color 0.15s ease,
+        border-color 0.15s ease,
+        background-color 0.15s ease;
+}
+
+.todo-state-option:hover:not(:disabled) {
+    color: var(--black-colors-2);
+    border-color: var(--black-colors-6);
+}
+
+.todo-state-option:disabled {
+    cursor: not-allowed;
+}
+
+.todo-subtask {
+    padding: 8px 10px;
+    background: var(--black-colors-9);
+    border: 1px solid var(--black-colors-8);
+    border-radius: 5px;
+}
+
+/* 하위 작업 제목: 클릭하면 해당 작업으로 모달이 전환된다 */
+.todo-subtask-title {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    flex: 1;
+    min-width: 0;
+    background: none;
+    border: none;
+    padding: 2px 0;
+    text-align: left;
+    cursor: pointer;
+}
+
+.todo-subtask-title:hover .mantine-Text-root {
+    color: var(--black-colors-1);
+}
+
+/* 모달 상세 — 클릭하면 날짜 입력으로 바뀌는 마감일 필드 */
+.todo-deadline-field {
+    background: none;
+    border: none;
+    padding: 2px 4px;
+    margin: -2px -4px;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.todo-deadline-field:hover {
+    background: var(--black-colors-7);
+}
+
+.todo-button-primary {
+    background: linear-gradient(135deg, var(--primary-colors-6), var(--primary-colors-7));
+}
+
+.todo-button-ghost {
+    background: var(--black-colors-7);
+    border: 1px solid var(--black-colors-6);
+    color: var(--black-colors-4);
+}
+
+.todo-button-ghost:hover {
+    background: var(--black-colors-6);
+    color: var(--black-colors-2);
+}
+
+/* 체크박스: 미체크 상태는 테두리만 남긴다 */
+.mantine-Checkbox-input:not(:checked) {
+    background-color: transparent;
+    border-color: var(--black-colors-6);
+}
+
+.mantine-Checkbox-input:not(:checked):hover {
+    border-color: var(--primary-colors-6);
 }

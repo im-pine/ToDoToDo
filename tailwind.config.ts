@@ -15,6 +15,11 @@ const config: Config = {
       xl: '1280px',
     },
     extend: {
+      fontFamily: {
+        display: ['Rajdhani', 'sans-serif'],
+        body: ['Inter', 'sans-serif'],
+        mono: ['JetBrains Mono', 'monospace'],
+      },
       colors: {
         'default-text': 'var(--default-text-color)',
         primary: {
