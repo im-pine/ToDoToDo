@@ -1,5 +1,5 @@
-import { createTodo, deleteTodo, detailsReadTodo, readTodo, updateTodo } from '@/lib/api/todo'
-import type { UpdateTodoPayload } from '@/lib/api/todo'
+import { createTodo, deleteTodo, detailsReadTodo, readTodo, updateTodo } from '@/lib/api/todoGateway'
+import type { UpdateTodoPayload } from '@/lib/api/todoGateway'
 import { differenceInCalendarDays, isValid } from 'date-fns'
 import { Todo, TodoState } from '@prisma/client'
 

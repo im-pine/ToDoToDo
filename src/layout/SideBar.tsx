@@ -4,6 +4,7 @@ import {
   countByState,
   getTodoStats,
   getUpcomingSidebarItems,
+  SyncModal,
   TODO_STATE_META,
   TODO_STATE_ORDER,
   TodoBriefUI,
@@ -13,9 +14,12 @@ import {
   useUpcomingSubtasks,
 } from '@/components/todo'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faPlus, faXmark } from '@fortawesome/free-solid-svg-icons'
-import { ActionIcon, AppShell, Button, Flex, ScrollArea, Stack, Text } from '@mantine/core'
+import { faArrowRightFromBracket, faPlus, faRotate, faXmark } from '@fortawesome/free-solid-svg-icons'
+import { ActionIcon, AppShell, Avatar, Button, Flex, ScrollArea, Stack, Text } from '@mantine/core'
+import { useDisclosure } from '@mantine/hooks'
 import Logo from '@/layout/Logo'
+import { useAuth } from '@/app/AuthProvider'
+import { countLocalTodos } from '@/lib/storage/localTodo'
 import { ReactNode } from 'react'
 
 type SideBarProps = {
@@ -32,6 +36,11 @@ export default function SideBar({ todos, filter, onFilterChange, onAdd, onNaviga
   const stats = getTodoStats(todos)
   const upcomingSubtasks = useUpcomingSubtasks()
   const upcoming = getUpcomingSidebarItems(todos, upcomingSubtasks)
+  const { user, isLoggedIn, logout } = useAuth()
+  const [syncOpened, { open: openSync, close: closeSync }] = useDisclosure()
+  // 동기화 대상이 있을 때만 버튼을 보여준다. 리렌더될 때마다 다시 읽으므로 동기화 완료 후(목록 리페치로
+  // 이 컴포넌트가 다시 그려질 때) 자연히 사라진다 — 별도 이벤트 배선 없이도 항상 최신 상태를 반영한다.
+  const localTodoCount = isLoggedIn ? countLocalTodos() : 0
 
   const select = (next: TodoFilter) => {
     onFilterChange(next)
@@ -115,7 +124,7 @@ export default function SideBar({ todos, filter, onFilterChange, onAdd, onNaviga
         </Stack>
       </AppShell.Section>
 
-      <AppShell.Section px={20} pt={12} pb={16} className={'border-black-800 border-t'}>
+      <AppShell.Section px={20} pt={12} pb={12} className={'border-black-800 border-t'}>
         <Button
           fullWidth={true}
           onClick={() => {
@@ -129,6 +138,48 @@ export default function SideBar({ todos, filter, onFilterChange, onAdd, onNaviga
           새 할일 추가
         </Button>
       </AppShell.Section>
+
+      {/* 로그인 상태 · 동기화 — 로그인 시엔 계정 정보 + 로그아웃 + 동기화, 비로그인 시엔 로그인 진입점만 상시 노출 */}
+      <AppShell.Section px={20} pt={12} pb={16} className={'border-black-800 border-t'}>
+        {isLoggedIn ? (
+          <Stack gap={10}>
+            <Flex align={'center'} gap={10}>
+              <Avatar src={user?.profileImage} radius={'xl'} size={28} />
+              <Text size={'12px'} c={'black.3'} className={'flex-1 truncate'}>
+                {user?.nickname ?? '카카오 사용자'}
+              </Text>
+              <ActionIcon variant={'subtle'} color={'black.5'} onClick={logout} aria-label={'로그아웃'}>
+                <FontAwesomeIcon icon={faArrowRightFromBracket} size={'sm'} />
+              </ActionIcon>
+            </Flex>
+            {localTodoCount > 0 && (
+              <Button
+                fullWidth={true}
+                variant={'default'}
+                onClick={openSync}
+                leftSection={<FontAwesomeIcon icon={faRotate} />}
+                className={'font-display !font-semibold'}
+                classNames={{ root: 'todo-button-ghost' }}
+              >
+                기기 데이터 동기화
+              </Button>
+            )}
+          </Stack>
+        ) : (
+          <Button
+            component={'a'}
+            href={'/login'}
+            fullWidth={true}
+            variant={'default'}
+            className={'font-display !font-semibold'}
+            classNames={{ root: 'todo-button-ghost' }}
+          >
+            로그인
+          </Button>
+        )}
+      </AppShell.Section>
+
+      <SyncModal opened={syncOpened} onClose={closeSync} />
     </AppShell.Navbar>
   )
 }

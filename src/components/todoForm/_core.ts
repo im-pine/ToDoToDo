@@ -4,7 +4,7 @@ import { useQueryClient } from '@tanstack/react-query'
 import { TodoState } from '@prisma/client'
 import { useCallback, useRef, useState } from 'react'
 import ToDo from '@/components/todo/_core'
-import { todoKeys } from '@/lib/api/todo'
+import { todoKeys } from '@/lib/api/todoGateway'
 
 export type TodoFormValues = {
   title: string

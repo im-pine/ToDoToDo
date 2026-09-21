@@ -1,7 +1,7 @@
 'use client'
 
-import { filterTodos, sortTodos, TodoCardUI, TodoFilter, TodoSummary } from '@/components/todo'
-import { readTodoList, todoKeys } from '@/lib/api/todo'
+import { filterTodos, PostLoginSyncPrompt, sortTodos, TodoCardUI, TodoFilter, TodoSummary } from '@/components/todo'
+import { readTodoList, todoKeys } from '@/lib/api/todoGateway'
 import { TodoFormModalUI } from '@/components/todoForm'
 import { AppShell, Center, Flex, Loader, Stack, Text } from '@mantine/core'
 import { useDisclosure } from '@mantine/hooks'
@@ -79,6 +79,7 @@ export default function Home() {
       </AppShell.Main>
 
       <TodoFormModalUI opened={formOpened} onClose={closeForm} />
+      <PostLoginSyncPrompt />
     </AppShell>
   )
 }

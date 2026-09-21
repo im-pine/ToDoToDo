@@ -14,9 +14,24 @@ enum TodoState {
   DONE
 }
 
+model User {
+  id           Int      @id @default(autoincrement())
+  kakaoId      String   @unique
+  nickname     String?
+  profileImage String?  @db.Text
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  todos Todo[]
+
+  @@map("users")
+}
+
 model Todo {
   id       Int  @id @default(autoincrement())
   parentId Int?
+  userId   Int
 
   title    String    @db.VarChar(255)
   contents String    @default("") @db.Text
@@ -27,8 +42,10 @@ model Todo {
 
   parent   Todo?  @relation("TodoToChildren", fields: [parentId], references: [id], onDelete: Cascade)
   children Todo[] @relation("TodoToChildren")
+  user     User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([parentId])
   @@index([state])
+  @@index([userId])
   @@map("todos")
 }

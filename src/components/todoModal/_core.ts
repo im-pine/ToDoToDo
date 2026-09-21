@@ -2,7 +2,7 @@
 
 import ToDo, { getChildrenProgress, TodoDetails, TodoProgress } from '@/components/todo/_core'
 import { useTodoActions } from '@/components/todo/_hooks'
-import { detailsReadTodo, todoKeys } from '@/lib/api/todo'
+import { detailsReadTodo, todoKeys } from '@/lib/api/todoGateway'
 import { useQuery } from '@tanstack/react-query'
 import { useDisclosure } from '@mantine/hooks'
 import { useCallback, useMemo, useState } from 'react'

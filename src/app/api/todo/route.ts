@@ -3,24 +3,22 @@
 import { NextResponse } from 'next/server'
 import { Prisma } from '@prisma/client'
 import { prisma } from '@/lib/prisma'
+import { toYmd } from '@/lib/date'
+import { requireUserId } from '@/lib/auth/session'
 
 type MappingType = 'deadline' | undefined
 
-const toYmd = (date: Date): string => {
-  const y = date.getFullYear()
-  const m = String(date.getMonth() + 1).padStart(2, '0')
-  const d = String(date.getDate()).padStart(2, '0')
-  return `${y}-${m}-${d}`
-}
-
 export async function GET(req: Request) {
   try {
+    const userId = await requireUserId()
+    if (!userId) return NextResponse.json({ message: 'unauthorized' }, { status: 401 })
+
     const { searchParams } = new URL(req.url)
     const mappingType = (searchParams.get('mappingType') ?? undefined) as MappingType
 
     // 최상위 할일만 목록에 노출한다. (하위 할일은 children 으로 따라온다)
     const todos = await prisma.todo.findMany({
-      where: { parentId: null },
+      where: { parentId: null, userId },
       select: {
         id: true,
         title: true,
@@ -59,6 +57,9 @@ export async function GET(req: Request) {
 
 export async function POST(req: Request) {
   try {
+    const userId = await requireUserId()
+    if (!userId) return NextResponse.json({ message: 'unauthorized' }, { status: 401 })
+
     const body = await req.json()
 
     const title = String(body.title ?? '').trim()
@@ -66,14 +67,16 @@ export async function POST(req: Request) {
       return NextResponse.json({ message: 'title is required' }, { status: 400 })
     }
 
-    const data: Prisma.TodoCreateInput = {
+    // userId(관계)와 parentId(자기참조 FK)를 한 create 호출에서 같이 쓰려면 스칼라(unchecked) 입력으로
+    // 통일해야 한다 — 관계 스타일(user: {connect})과 스칼라 FK를 섞으면 Prisma가 parentId를 거부한다.
+    const data: Prisma.TodoUncheckedCreateInput = {
       title,
       contents: body.contents ?? undefined,
       state: body.state ?? undefined,
       deadline: body.deadline ? new Date(body.deadline) : undefined,
+      userId,
+      parentId: typeof body.parentId === 'number' ? body.parentId : undefined,
     }
-
-    ;(data as any).parentId = typeof body.parentId === 'number' ? body.parentId : undefined
 
     const created = await prisma.todo.create({ data })
 

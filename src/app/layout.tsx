@@ -1,13 +1,16 @@
 import { config } from '@fortawesome/fontawesome-svg-core'
 import { ColorSchemeScript, MantineProvider, mantineHtmlProps } from '@mantine/core'
+import { Notifications } from '@mantine/notifications'
 import type { Metadata } from 'next'
 import theme from '@/styles/mantine'
 import { ReactNode } from 'react'
 
 import '@fortawesome/fontawesome-svg-core/styles.css'
 import '@mantine/core/styles.css'
+import '@mantine/notifications/styles.css'
 import '../styles/globals.css'
 import QueryProvider from '@/app/QueryProvider'
+import { AuthProvider } from '@/app/AuthProvider'
 
 config.autoAddCss = false
 
@@ -28,9 +31,12 @@ export default function RootLayout({
       </head>
       <body>
         <QueryProvider>
-          <MantineProvider theme={theme} defaultColorScheme={'dark'}>
-            {children}
-          </MantineProvider>
+          <AuthProvider>
+            <MantineProvider theme={theme} defaultColorScheme={'dark'}>
+              <Notifications position={'bottom-center'} />
+              {children}
+            </MantineProvider>
+          </AuthProvider>
         </QueryProvider>
       </body>
     </html>

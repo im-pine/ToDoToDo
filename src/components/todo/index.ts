@@ -30,6 +30,8 @@ import TodoProgressUI from './TodoProgressUI'
 import TodoBriefUI from './TodoBriefUI'
 import TodoCardUI from './TodoCardUI'
 import BasicTodo from './TodoUI'
+import SyncModal from './SyncModal'
+import PostLoginSyncPrompt from './PostLoginSyncPrompt'
 
 export default ToDo
 
@@ -65,4 +67,13 @@ export type {
 }
 
 /* UI 변형 */
-export { BasicTodo, TodoBriefUI, TodoCardUI, TodoDeadlineBadgeUI, TodoProgressUI, TodoStateBadgeUI }
+export {
+  BasicTodo,
+  TodoBriefUI,
+  TodoCardUI,
+  TodoDeadlineBadgeUI,
+  TodoProgressUI,
+  TodoStateBadgeUI,
+  SyncModal,
+  PostLoginSyncPrompt,
+}

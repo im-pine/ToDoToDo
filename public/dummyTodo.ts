@@ -4,6 +4,7 @@ export const todoDummyData: Todo[] = [
   {
     id: 1,
     parentId: null,
+    userId: 1,
     title: '기술 블로그 글 초안 작성',
     contents: 'ToDo 웹 개발 과정을 정리하고 초안을 작성한다.',
     state: TodoState.IN_PROGRESS,
@@ -13,6 +14,7 @@ export const todoDummyData: Todo[] = [
   {
     id: 2,
     parentId: null,
+    userId: 1,
     title: '독서 20페이지',
     contents: '자기계발서 또는 기술 서적 읽기',
     state: TodoState.PENDING,
@@ -22,6 +24,7 @@ export const todoDummyData: Todo[] = [
   {
     id: 3,
     parentId: null,
+    userId: 1,
     title: '여행용 가방 점검',
     contents: '충전기, 여권, 세면도구 확인',
     state: TodoState.PENDING,
@@ -31,6 +34,7 @@ export const todoDummyData: Todo[] = [
   {
     id: 4,
     parentId: null,
+    userId: 1,
     title: '영어 단어 20개 암기',
     contents: '단어장 앱 활용',
     state: TodoState.PENDING,
@@ -40,6 +44,7 @@ export const todoDummyData: Todo[] = [
   {
     id: 5,
     parentId: null,
+    userId: 1,
     title: '아침 8시 기상 후 스트레칭',
     contents: '목, 어깨 위주 스트레칭 10분',
     state: TodoState.DONE,
@@ -49,6 +54,7 @@ export const todoDummyData: Todo[] = [
   {
     id: 6,
     parentId: null,
+    userId: 1,
     title: '취침 전 내일 일정 확인',
     contents: '캘린더 및 할 일 정리',
     state: TodoState.DONE,

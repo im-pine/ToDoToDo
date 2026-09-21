@@ -3,7 +3,7 @@
 import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { TodoState } from '@prisma/client'
 import { useCallback, useState } from 'react'
-import { readUpcomingSubtasks, todoKeys } from '@/lib/api/todo'
+import { readUpcomingSubtasks, todoKeys } from '@/lib/api/todoGateway'
 import ToDo, { TodoSubtaskSummary } from '@/components/todo/_core'
 
 /**

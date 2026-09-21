@@ -3,6 +3,7 @@
 import { NextResponse } from 'next/server'
 import { TodoState } from '@prisma/client'
 import { prisma } from '@/lib/prisma'
+import { requireUserId } from '@/lib/auth/session'
 
 /**
  * 마감일이 있는 미완료 하위 작업을 깊이에 상관없이 모두 반환한다.
@@ -11,8 +12,12 @@ import { prisma } from '@/lib/prisma'
  */
 export async function GET() {
   try {
+    const userId = await requireUserId()
+    if (!userId) return NextResponse.json({ message: 'unauthorized' }, { status: 401 })
+
     const subtasks = await prisma.todo.findMany({
       where: {
+        userId,
         parentId: { not: null },
         deadline: { not: null },
         state: { not: TodoState.DONE },
