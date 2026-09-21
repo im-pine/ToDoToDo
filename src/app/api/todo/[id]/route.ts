@@ -24,9 +24,10 @@ async function getChildrenIds(rootId: number): Promise<number[]> {
   return descendants
 }
 
-export async function GET(_req: Request, { params }: { params: { id: string } }) {
+export async function GET(_req: Request, { params }: { params: Promise<{ id: string }> }) {
   try {
-    const id = Number(params.id)
+    const { id: rawId } = await params
+    const id = Number(rawId)
     if (!Number.isInteger(id)) {
       return NextResponse.json({ message: 'invalid id' }, { status: 400 })
     }
@@ -51,9 +52,10 @@ export async function GET(_req: Request, { params }: { params: { id: string } })
   }
 }
 
-export async function PATCH(req: Request, { params }: { params: { id: string } }) {
+export async function PATCH(req: Request, { params }: { params: Promise<{ id: string }> }) {
   try {
-    const id = Number(params.id)
+    const { id: rawId } = await params
+    const id = Number(rawId)
     if (!Number.isInteger(id)) {
       return NextResponse.json({ message: 'invalid id' }, { status: 400 })
     }
@@ -95,9 +97,10 @@ export async function PATCH(req: Request, { params }: { params: { id: string } }
   }
 }
 
-export async function DELETE(_req: Request, { params }: { params: { id: string } }) {
+export async function DELETE(_req: Request, { params }: { params: Promise<{ id: string }> }) {
   try {
-    const id = Number(params.id)
+    const { id: rawId } = await params
+    const id = Number(rawId)
     if (!Number.isInteger(id)) {
       return NextResponse.json({ message: 'invalid id' }, { status: 400 })
     }

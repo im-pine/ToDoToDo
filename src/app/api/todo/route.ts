@@ -1,7 +1,7 @@
 'use server'
 
 import { NextResponse } from 'next/server'
-import { Prisma, TodoState } from '@prisma/client'
+import { Prisma } from '@prisma/client'
 import { prisma } from '@/lib/prisma'
 
 type MappingType = 'deadline' | undefined
@@ -18,15 +18,19 @@ export async function GET(req: Request) {
     const { searchParams } = new URL(req.url)
     const mappingType = (searchParams.get('mappingType') ?? undefined) as MappingType
 
+    // 최상위 할일만 목록에 노출한다. (하위 할일은 children 으로 따라온다)
     const todos = await prisma.todo.findMany({
-      where: {
-        state: { in: [TodoState.PENDING, TodoState.IN_PROGRESS, TodoState.DONE] },
-      },
+      where: { parentId: null },
       select: {
         id: true,
         title: true,
+        contents: true,
         state: true,
         deadline: true,
+        children: {
+          select: { id: true, state: true },
+          orderBy: { id: 'asc' },
+        },
       },
       orderBy: [{ deadline: 'asc' }, { id: 'asc' }],
     })

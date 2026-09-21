@@ -1,46 +1,84 @@
 'use client'
 
-import { AppShell, Box, Container, Divider, Stack, Title } from '@mantine/core'
+import { filterTodos, sortTodos, TodoCardUI, TodoFilter, TodoSummary } from '@/components/todo'
+import { readTodoList, todoKeys } from '@/lib/api/todo'
+import { TodoFormModalUI } from '@/components/todoForm'
+import { AppShell, Center, Flex, Loader, Stack, Text } from '@mantine/core'
 import { useDisclosure } from '@mantine/hooks'
-import TodoSend from '@/components/input/TodoSend'
-import TodoUI from '@/components/todo/TodoUI'
-import SideBar from '@/layout/SideBar'
 import { useQuery } from '@tanstack/react-query'
-import { fetcher } from '@/lib/fetcher'
-import { TodoSummary } from '@/components/todo/_core'
-import formatDateToKr from '@/lib/formatDateToKr'
-
-type TodoMappingData = Record<string, TodoSummary[]>
+import SideBar from '@/layout/SideBar'
+import Header from '@/layout/Header'
+import { useMemo, useState } from 'react'
 
 export default function Home() {
-  const [opened, { toggle }] = useDisclosure()
-  const { data, isLoading, error } = useQuery<TodoMappingData>({
-    queryKey: ['todo'],
-    queryFn: () => fetcher<TodoMappingData>('/api/todo?mappingType=deadline'),
+  const [navOpened, { toggle: toggleNav, close: closeNav }] = useDisclosure()
+  const [formOpened, { open: openForm, close: closeForm }] = useDisclosure()
+  const [filter, setFilter] = useState<TodoFilter>('ALL')
+
+  const { data, isLoading, isError } = useQuery<TodoSummary[]>({
+    queryKey: todoKeys.lists(),
+    queryFn: readTodoList,
   })
-  console.log(data)
-  // if (isLoading) return null
-  // if (error) return null
+
+  const todos = useMemo(() => data ?? [], [data])
+  const visibleTodos = useMemo(() => sortTodos(filterTodos(todos, filter)), [todos, filter])
+
   return (
-    <AppShell padding={'md'} navbar={{ width: 256, breakpoint: 'sm', collapsed: { mobile: !opened } }}>
-      <SideBar />
-      <AppShell.Main bg={'black.7'}>
-        <Container size={'768px'} py={'64px'} h={'94dvh'} className={'relative h-full'}>
-          {data &&
-            Object.entries(data).map(([key, value]) => (
-              <Stack key={key} gap={20}>
-                <Title order={2}>{formatDateToKr(key)}</Title>
-                <Stack gap={4}>
-                  {value.map((todo) => (
-                    <TodoUI key={todo.id} todo={todo} />
-                  ))}
-                </Stack>
-                <Divider color={'black.6'} />
-              </Stack>
-            ))}
-          <TodoSend />
-        </Container>
+    <AppShell
+      layout={'alt'}
+      header={{ height: 72 }}
+      navbar={{ width: 260, breakpoint: 'sm', collapsed: { mobile: !navOpened } }}
+      bg={'black.9'}
+    >
+      <SideBar
+        todos={todos}
+        filter={filter}
+        onFilterChange={setFilter}
+        onAdd={openForm}
+        onNavigate={closeNav}
+      />
+
+      <Header
+        filter={filter}
+        onFilterChange={setFilter}
+        count={visibleTodos.length}
+        onAdd={openForm}
+        navOpened={navOpened}
+        onToggleNav={toggleNav}
+      />
+
+      <AppShell.Main bg={'black.9'}>
+        <Stack gap={8} px={{ base: 16, sm: 24 }} py={20}>
+          {isLoading && (
+            <Center py={80}>
+              <Loader color={'primary.6'} />
+            </Center>
+          )}
+
+          {isError && (
+            <Center py={80}>
+              <Text size={'14px'} c={'primary.4'}>
+                할일을 불러오지 못했습니다.
+              </Text>
+            </Center>
+          )}
+
+          {!isLoading && !isError && visibleTodos.length === 0 && (
+            <Flex direction={'column'} align={'center'} justify={'center'} py={80} c={'black.6'} gap={16}>
+              <Text size={'48px'}>◎</Text>
+              <Text className={'font-display font-semibold'} size={'16px'}>
+                할일이 없습니다
+              </Text>
+            </Flex>
+          )}
+
+          {visibleTodos.map((todo) => (
+            <TodoCardUI key={todo.id} todo={todo} />
+          ))}
+        </Stack>
       </AppShell.Main>
+
+      <TodoFormModalUI opened={formOpened} onClose={closeForm} />
     </AppShell>
   )
 }

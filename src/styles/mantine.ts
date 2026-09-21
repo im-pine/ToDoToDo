@@ -14,6 +14,10 @@ const defaultColor = (Object.keys(colors) as ColorKey[]).reduce(
 )
 
 const theme = createTheme({
+  primaryColor: 'primary',
+  primaryShade: 6,
+  fontFamily: 'var(--font-body)',
+  fontFamilyMonospace: 'var(--font-mono)',
   colors: {
     ...defaultColor,
     primary: [
@@ -59,7 +63,8 @@ const theme = createTheme({
   },
 
   headings: {
-    fontFamily: 'Roboto, sans-serif',
+    fontFamily: 'var(--font-display)',
+    fontWeight: '700',
     sizes: {
       h1: { fontSize: '36px' },
     },

@@ -1,60 +1,36 @@
-import { faSquare, faCircle as faSolidCircle } from '@fortawesome/free-solid-svg-icons'
-import { faCircle, faCircleCheck } from '@fortawesome/free-regular-svg-icons'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { StatusConfig, TodoSummary } from '@/components/todo/_core'
-import { Todo, TodoState } from '@prisma/client'
-import { Flex, Modal, Text } from '@mantine/core'
-import { useDisclosure } from '@mantine/hooks'
-import TodoModal from '@/components/todoModal/TodoModal'
-import ToDo from '@/components/todo/index'
-import { useState } from 'react'
+'use client'
 
-const config: StatusConfig = {
-  [TodoState.PENDING]: {
-    icon: faCircle,
-    color: 'black.4',
-    label: '대기',
-  },
-  [TodoState.IN_PROGRESS]: {
-    icon: faSolidCircle,
-    color: 'blue',
-    label: '진행',
-  },
-  [TodoState.ON_HOLD]: {
-    icon: faSquare,
-    color: 'black.4',
-    label: '보류',
-  },
-  [TodoState.DONE]: {
-    icon: faCircleCheck,
-    color: 'green',
-    label: '완료',
-  },
+import { TodoSummary } from '@/components/todo/_core'
+import TodoDeadlineBadgeUI from '@/components/todo/TodoDeadlineBadgeUI'
+import TodoStateBadgeUI from '@/components/todo/TodoStateBadgeUI'
+import TodoModalUI, { useTodoDetail } from '@/components/todoModal'
+import { Flex, Text } from '@mantine/core'
+import { TodoState } from '@prisma/client'
+
+type TodoUIProps = {
+  todo: TodoSummary
+  /** 마감일 배지 노출 여부 */
+  withDeadline?: boolean
 }
 
-export default function TodoUI({ todo }: { todo: Todo | TodoSummary }) {
-  const [modalData, setModalData] = useState<null | ToDo>(null)
-  const [opened, { open, close }] = useDisclosure(false)
-  const icon = config[todo.state].icon
-  const cancelLine = todo.state === TodoState.DONE ? 'line-through' : ''
-  const color = config[todo.state].color
+/**
+ * 가장 단순한 한 줄짜리 표현.
+ * 카드(TodoCardUI)·요약(TodoBriefUI)과 동일한 코어를 쓰되 밀도만 다르다.
+ */
+export default function TodoUI({ todo, withDeadline = true }: TodoUIProps) {
+  const controller = useTodoDetail(todo.id)
+  const done = todo.state === TodoState.DONE
 
-  const openModal = async () => {
-    const todoClass = new ToDo(todo)
-    const todoDetail = await todoClass.detailsRead()
-    const modal = new ToDo(todoDetail)
-    setModalData(modal)
-    console.log('todoDetail::', todoDetail)
-    open()
-  }
   return (
     <>
-      <TodoModal opened={opened} onClose={close} title={'Authentication'} todo={modalData}>
-        {/* Modal content */}
-      </TodoModal>
-      <Flex className={'cursor-pointer'} align={'center'} gap={8} c={color} onClick={openModal}>
-        <FontAwesomeIcon icon={icon} />
-        <Text td={cancelLine}>{todo.title}</Text>
+      <TodoModalUI controller={controller} />
+
+      <Flex align={'center'} gap={8} className={'todo-line'} onClick={controller.open}>
+        <TodoStateBadgeUI state={todo.state} dotOnly={true} />
+        <Text size={'14px'} c={done ? 'black.5' : 'black.1'} td={done ? 'line-through' : undefined} lineClamp={1}>
+          {todo.title}
+        </Text>
+        {withDeadline && <TodoDeadlineBadgeUI deadline={todo.deadline} className={'ml-auto'} />}
       </Flex>
     </>
   )
